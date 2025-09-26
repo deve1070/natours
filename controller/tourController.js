@@ -52,20 +52,26 @@ exports.creatTour = catchAsync(async (req, res, next) => {
   });
 });
 exports.updateTour = catchAsync(async (req, res, next) => {
-  const updatedTour = Tour.findByIdAndUpdate(req.params.id, req.body, {
+  const tour = Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
+  if (!tour) {
+    return next(new AppError('No tour found with that Id', 404));
+  }
   res.status(200).json({
     status: 'success',
     data: {
-      updatedTour,
+      tour,
     },
   });
 });
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
-  await Tour.findByIdAndDelete(req.params.id);
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+  if (!tour) {
+    return next(new AppError('No tour found with that Id', 404));
+  }
   res.status(204).json({
     status: 'success',
   });
