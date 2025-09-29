@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const userRoute = require('./routes/userRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const globalErrorHandler = require('.//controller/errorController');
-const AppError = this.require('./utils/appError.js');
+const AppError = require('./utils/appError');
 
 const app = express();
 
