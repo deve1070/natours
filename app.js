@@ -1,14 +1,17 @@
 const express = require('express');
 const morgan = require('morgan');
-
-const xss = require('xss-clean');
-const userRoute = require('./routes/userRoutes');
-const tourRouter = require('./routes/tourRoutes');
-const globalErrorHandler = require('./controller/errorController');
 const rateLimiter = require('express-rate-limit');
 const helmet = require('helmet');
 const hpp = require('hpp');
 const mongoSanitizer = require('express-mongo-sanitize');
+
+const xss = require('xss-clean');
+const userRoute = require('./routes/userRoutes');
+const tourRouter = require('./routes/tourRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
+
+const globalErrorHandler = require('./controller/errorController');
+
 const app = express();
 
 app.use(helmet());
@@ -50,6 +53,7 @@ app.use(xss());
 app.use(express.static(`${__dirname}/public`));
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {
   res.status(404).json({

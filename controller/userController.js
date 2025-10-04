@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -9,17 +10,10 @@ const filterObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users,
-    },
-  });
-});
-
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 exports.updateMe = catchAsync(async (req, res, next) => {
   // Create error if user posts password or passwordConfirm
   if (req.body.password || req.body.passwordConfirm) {
@@ -53,43 +47,8 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
-// exports.getUser = (req, res) => {
-//   const id = req.params.id * 1;
-//   const user = users.find((el) => el.id == id);
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       user,
-//     },
-//   });
-// };
-// exports.deleteUser = (req, res) => {
-//   res.status(500).json({
-//     status: 'failur',
-//     message: 'This route is not yet implemented',
-//   });
-// };
-// exports.updateUser = (req, res) => {
-//   res.status(500).json({
-//     status: 'failur',
-//     message: 'This route is not yet implemented',
-//   });
-// };
-// exports.createUser = (req, res) => {
-//   const newId = users[users.length - 1].id + 1;
-//   const newUser = Object.assign({ id: newId }, req.body);
 
-//   users.push(newUser);
-//   fs.writeFile(
-//     `${__dirname}/dev-data/data/users.json`,
-//     JSON.stringify(users),
-//     (err) => {
-//       res.status(201).json({
-//         status: 'success',
-//         data: {
-//           newUser,
-//         },
-//       });
-//     },
-//   );
-// };
+exports.deleteUser = factory.deleteOne(User);
+exports.updateUser = factory.updateOne(User);
+exports.getUser = factory.getOne(User);
+exports.getAllUsers = factory.getAll(User);
